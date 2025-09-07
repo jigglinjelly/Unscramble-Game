@@ -162,7 +162,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: bold;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px15px rgba(0, 0, 0, 0.1);
             position: relative;
         }
         
@@ -198,7 +198,7 @@
         
         #passBtn:hover:not(:disabled) {
             background: #d32f2f;
-            transform: translateY(-3px);
+           transform: translateY(-3px);
         }
         
         #pauseBtn {
@@ -206,7 +206,7 @@
             color: white;
         }
         
-        #pauseBtn:hover:not(:disabled) {
+#pauseBtn:hover:not(:disabled) {
             background: #f57c00;
             transform: translateY(-3px);
         }
@@ -249,7 +249,7 @@
         .instructions ul {
             list-style-type: none;
             padding-left: 20px;
-        }
+}
         
         .instructions li {
             margin-bottom: 8px;
@@ -293,8 +293,8 @@
         
         .settings label {
             display: block;
-            margin: 8px 0;
-            display: flex;
+            margin: 8px0;
+            display:flex;
             align-items: center;
             justify-content: space-between;
         }
@@ -383,7 +383,7 @@
         .keyboard-hint {
             text-align: center;
             margin-top: 10px;
-            color: #666;
+color: #666;
             font-size: 0.9rem;
         }
         
@@ -492,6 +492,22 @@
             margin-top: 10px;
         }
         
+        /* Clear all button style */
+        .clear-all-btn {
+            background: #f44336;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .clear-all-btn:hover {
+            background: #d32f2f;
+        }
+        
         @media (max-width: 600px) {
             .players-container {
                 flex-direction: column;
@@ -543,6 +559,16 @@
             .preset-list {
                 grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             }
+            
+            .word-bank h3 {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .clear-all-btn {
+                margin-left: 0;
+                margin-top: 10px;
+            }
         }
     </style>
 </head>
@@ -566,7 +592,7 @@
             <div class="player" id="player1">
                 <h2>
                     <span>Player</span>
-                    <input type="text" class="player-name" id="player1Name" value="Player 1" maxlength="12">
+                    <input type="text" class="player-name"id="player1Name" value="Player 1" maxlength="12">
                 </h2>
                 <div class="score">0</div>
                 <div class="time-bank">Time: 60.0s</div>
@@ -615,7 +641,9 @@
         </div>
         
         <div class="word-bank">
-            <h3>Word Bank <span style="font-size: 0.8rem; font-weight: normal;">(Total: <span id="wordCount">0</span>)</span></h3>
+            <h3>Word Bank <span style="font-size: 0.8rem; font-weight: normal;">(Total: <span id="wordCount">0</span>)</span>
+                <button id="clearAllBtn" class="clear-all-btn">Clear All Words</button>
+            </h3>
             
             <div class="tab-buttons">
                 <button class="tab-button active" data-tab="single">Add Single Word</button>
@@ -696,7 +724,7 @@
             const player1ScoreElement = player1Element.querySelector('.score');
             const player2ScoreElement = player2Element.querySelector('.score');
             const player1TimeElement = player1Element.querySelector('.time-bank');
-            const player2TimeElement = player2Element.querySelector('.time-bank');
+const player2TimeElement = player2Element.querySelector('.time-bank');
             const player1NameElement = document.getElementById('player1Name');
             const player2NameElement = document.getElementById('player2Name');
             const initialTimeInput = document.getElementById('initialTime');
@@ -720,6 +748,9 @@
             const presetListElement = document.getElementById('presetList');
             const loadingIndicator = document.getElementById('loadingIndicator');
             const errorMessage = document.getElementById('errorMessage');
+            
+            // Clear all button
+            const clearAllBtn = document.getElementById('clearAllBtn');
             
             // Game state
             let currentPlayer = 1;
@@ -760,13 +791,11 @@
                 return normalizeText(word);
             }
             
-            // Initialize word bank
+            // Initialize word bank - start with empty array
             function initWordBank() {
-                // Load words from localStorage
-                const savedWords = localStorage.getItem('wordBank');
-                if (savedWords) {
-                    availableWords = JSON.parse(savedWords);
-                }
+                // Clear any saved words from localStorage
+                localStorage.removeItem('wordBank');
+                availableWords = [];
                 
                 // Load player names from localStorage
                 const savedPlayer1Name = localStorage.getItem('player1Name');
@@ -805,6 +834,21 @@
                         removeWord(index);
                     });
                 });
+            }
+            
+            // Function to clear all words
+            function clearAllWords() {
+                if (availableWords.length === 0) {
+                    alert('Word bank is already empty.');
+                    return;
+                }
+                
+                if (confirm('Are you sure you want to clear all words from the word bank?')) {
+                    availableWords = [];
+                    localStorage.setItem('wordBank', JSON.stringify(availableWords));
+                    updateWordList();
+                    alert('All words have been cleared from the word bank.');
+                }
             }
             
             // Add a new word
@@ -876,7 +920,7 @@
                 if (csvText.length === 0) {
                     alert('Please enter some words or phrases separated by commas.');
                     return;
-                }
+                }   
                 
                 const words = csvText.split(',')
                     .map(word => word.trim())
@@ -967,6 +1011,9 @@
                     }
                     
                     const text = await response.text();
+                    
+                    // Clear current word bank first
+                    availableWords = [];
                     
                     // Clear existing words in the bulk textarea and switch to bulk tab
                     bulkWordsTextarea.value = text;
@@ -1147,7 +1194,7 @@
                 pauseBtn.disabled = true;
                 
                 // Set timeout to continue game after showing answer
-                answerTimeout = setTimeout(() => {
+                answerTimeout = setTimeout((){
                     answerDisplayElement.textContent = "";
                     answerDisplayElement.className = "answer-display";
                     showingAnswer = false;
@@ -1238,7 +1285,7 @@
                 }
                 
                 // Display answer in red
-                displayAnswer(false);
+        displayAnswer(false);
             }
             
             // Function to end the game
@@ -1300,6 +1347,9 @@
             clearBulkBtn.addEventListener('click', () => { bulkWordsTextarea.value = ''; });
             addCsvBtn.addEventListener('click', addCsvWords);
             clearCsvBtn.addEventListener('click', () => { csvWordsTextarea.value = ''; });
+            
+            // Clear all words button
+            clearAllBtn.addEventListener('click', clearAllWords);
             
             // Keyboard shortcuts
             document.addEventListener('keydown', function(e) {
