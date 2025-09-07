@@ -162,7 +162,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: bold;
-            box-shadow: 0 5px15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             position: relative;
         }
         
@@ -198,7 +198,7 @@
         
         #passBtn:hover:not(:disabled) {
             background: #d32f2f;
-           transform: translateY(-3px);
+            transform: translateY(-3px);
         }
         
         #pauseBtn {
@@ -206,7 +206,7 @@
             color: white;
         }
         
-#pauseBtn:hover:not(:disabled) {
+        #pauseBtn:hover:not(:disabled) {
             background: #f57c00;
             transform: translateY(-3px);
         }
@@ -224,7 +224,7 @@
         }
         
         #startBtn:hover {
-            background: #1976d2;
+            background:#1976d2;
             transform: translateY(-3px);
         }
         
@@ -249,7 +249,7 @@
         .instructions ul {
             list-style-type: none;
             padding-left: 20px;
-}
+        }
         
         .instructions li {
             margin-bottom: 8px;
@@ -275,7 +275,7 @@
         }
         
         .game-over h2 {
-            color: #f57c00;
+           color: #f57c00;
             margin-bottom: 15px;
         }
         
@@ -293,8 +293,8 @@
         
         .settings label {
             display: block;
-            margin: 8px0;
-            display:flex;
+            margin: 8px 0;
+            display: flex;
             align-items: center;
             justify-content: space-between;
         }
@@ -334,7 +334,7 @@
             border-radius: 5px;
             resize: vertical;
             min-height: 100px;
-            margin-bottom: 10px;
+           margin-bottom: 10px;
         }
         
         .add-words input {
@@ -383,7 +383,7 @@
         .keyboard-hint {
             text-align: center;
             margin-top: 10px;
-color: #666;
+            color: #666;
             font-size: 0.9rem;
         }
         
@@ -537,7 +537,7 @@ color: #666;
                 max-width: 100px;
             }
             
-            .settings label {
+           .settings label {
                 flex-direction: column;
                 align-items: flex-start;
             }
@@ -592,7 +592,7 @@ color: #666;
             <div class="player" id="player1">
                 <h2>
                     <span>Player</span>
-                    <input type="text" class="player-name"id="player1Name" value="Player 1" maxlength="12">
+                    <input type="text" class="player-name" id="player1Name" value="Player 1" maxlength="12">
                 </h2>
                 <div class="score">0</div>
                 <div class="time-bank">Time: 60.0s</div>
@@ -724,7 +724,7 @@ color: #666;
             const player1ScoreElement = player1Element.querySelector('.score');
             const player2ScoreElement = player2Element.querySelector('.score');
             const player1TimeElement = player1Element.querySelector('.time-bank');
-const player2TimeElement = player2Element.querySelector('.time-bank');
+            const player2TimeElement = player2Element.querySelector('.time-bank');
             const player1NameElement = document.getElementById('player1Name');
             const player2NameElement = document.getElementById('player2Name');
             const initialTimeInput = document.getElementById('initialTime');
@@ -762,7 +762,7 @@ const player2TimeElement = player2Element.querySelector('.time-bank');
             let gameActive = false;
             let gamePaused = false;
             let answerTimeout = null;
-            let lastTimerUpdate = 0;
+           let lastTimerUpdate = 0;
             let usedWords = [];
             let availableWords = [];
             let showingAnswer = false;
@@ -920,14 +920,14 @@ const player2TimeElement = player2Element.querySelector('.time-bank');
                 if (csvText.length === 0) {
                     alert('Please enter some words or phrases separated by commas.');
                     return;
-                }   
+                }
                 
                 const words = csvText.split(',')
                     .map(word => word.trim())
                     .filter(word => word.length > 0);
                 
                 if (words.length === 0) {
-                    alert('No valid words found. Please enter words separated by commas.');
+                    alert('No valid wordsfound. Please enter words separated by commas.');
                     return;
                 }
                 
@@ -1014,6 +1014,8 @@ const player2TimeElement = player2Element.querySelector('.time-bank');
                     
                     // Clear current word bank first
                     availableWords = [];
+                    localStorage.setItem('wordBank', JSON.stringify(availableWords));
+                    updateWordList();
                     
                     // Clear existing words in the bulk textarea and switch to bulk tab
                     bulkWordsTextarea.value = text;
@@ -1153,7 +1155,7 @@ const player2TimeElement = player2Element.querySelector('.time-bank');
             function togglePause() {
                 if (!gameActive || showingAnswer) return;
                 
-                gamePaused = !gamePaused;
+                gamePaused= !gamePaused;
                 
                 if (gamePaused) {
                     stopTimer();
@@ -1194,7 +1196,7 @@ const player2TimeElement = player2Element.querySelector('.time-bank');
                 pauseBtn.disabled = true;
                 
                 // Set timeout to continue game after showing answer
-                answerTimeout = setTimeout((){
+                answerTimeout = setTimeout(() => {
                     answerDisplayElement.textContent = "";
                     answerDisplayElement.className = "answer-display";
                     showingAnswer = false;
@@ -1285,7 +1287,7 @@ const player2TimeElement = player2Element.querySelector('.time-bank');
                 }
                 
                 // Display answer in red
-        displayAnswer(false);
+                displayAnswer(false);
             }
             
             // Function to end the game
@@ -1304,7 +1306,7 @@ const player2TimeElement = player2Element.querySelector('.time-bank');
                 startBtn.disabled = false;
                 initialTimeInput.disabled = false;
                 passPenaltyInput.disabled = false;
-                player1NameElement.disabled = false;
+                player1NameElement.disabled =false;
                 player2NameElement.disabled = false;
                 pauseOverlay.style.display = 'none';
                 
