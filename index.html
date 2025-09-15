@@ -321,7 +321,33 @@
             align-items: center;
             flex-wrap: wrap;
         }
-        
+        .word-bank-toggle {
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .word-bank-toggle button {
+            padding: 10px 20px;
+            background: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .word-bank-toggle button:hover {
+            background: #1976d2;
+        }
+
+        .word-bank {
+            display: none; /* Hide by default */
+            /* ... existing styles ... */
+        }
+
+        .word-bank.visible {
+            display: block; /* Show when toggled */
+        }
         .add-words {
             margin-bottom: 15px;
             position: relative;
@@ -429,16 +455,17 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.7);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.5rem;
             font-weight: bold;
             color: #ff9800;
-            z-index: 10;
+            z-index: 5;
             border-radius: 10px;
             display: none;
+            pointer-events: none; /* This allows clicks to pass through to buttons */
         }
         
         /* New styles for preset wordlists */
@@ -531,6 +558,7 @@
             
             button {
                 width: 80%;
+                z-index: 10; /* Buttons above overlay */
             }
             
             .player-name {
@@ -625,6 +653,10 @@
                     <span class="key-shortcut">→</span>
                     Pass
                 </button>
+                <button id="endGameBtn" disabled>
+                    <span class="key-shortcut">X</span>
+                    End Game
+                </button>
             </div>
             
             <div class="keyboard-hint">
@@ -639,7 +671,11 @@
             <p id="winnerMessage"></p>
             <button id="restartBtn">Play Again</button>
         </div>
-        
+
+        <div class="word-bank-toggle">
+             <button id="toggleWordBankBtn">Show Word Bank</button>
+        </div>
+
         <div class="word-bank">
             <h3>Word Bank <span style="font-size: 0.8rem; font-weight: normal;">(Total: <span id="wordCount">0</span>)</span>
                 <button id="clearAllBtn" class="clear-all-btn">Clear All Words</button>
@@ -743,6 +779,9 @@
             const tabContents = document.querySelectorAll('.tab-content');
             const pauseOverlay = document.getElementById('pauseOverlay');
             const controlsContainer = document.getElementById('controlsContainer');
+            const endGameBtn = document.getElementById('endGameBtn');
+            const toggleWordBankBtn = document.getElementById('toggleWordBankBtn');
+            const wordBankElement = document.querySelector('.word-bank');
             
             // New elements for preset wordlists
             const presetListElement = document.getElementById('presetList');
@@ -796,7 +835,8 @@
                 // Clear any saved words from localStorage
                 localStorage.removeItem('wordBank');
                 availableWords = [];
-                
+                wordBankElement.classList.remove('visible');
+                toggleWordBankBtn.textContent = 'Show Word Bank';
                 // Load player names from localStorage
                 const savedPlayer1Name = localStorage.getItem('player1Name');
                 const savedPlayer2Name = localStorage.getItem('player2Name');
@@ -1074,6 +1114,7 @@
                 pauseBtn.textContent = "Pause";
                 pauseBtn.classList.remove("paused");
                 startBtn.disabled = true;
+                endGameBtn.disabled = false;
                 initialTimeInput.disabled = true;
                 passPenaltyInput.disabled = true;
                 player1NameElement.disabled = true;
@@ -1304,12 +1345,17 @@
                 passBtn.disabled = true;
                 pauseBtn.disabled = true;
                 startBtn.disabled = false;
+                endGameBtn.disabled = true;
                 initialTimeInput.disabled = false;
                 passPenaltyInput.disabled = false;
                 player1NameElement.disabled =false;
                 player2NameElement.disabled = false;
                 pauseOverlay.style.display = 'none';
-                
+                // Show the current answer when game ends
+                if (currentWord) {
+                    answerDisplayElement.textContent = `Correct answer: ${formatWordForDisplay(currentWord)}`;
+                    answerDisplayElement.className = "answer-display correct-answer";
+                }
                 // Determine winner
                 let winnerMessage = "";
                 if (player1Score > player2Score) {
@@ -1349,7 +1395,17 @@
             clearBulkBtn.addEventListener('click', () => { bulkWordsTextarea.value = ''; });
             addCsvBtn.addEventListener('click', addCsvWords);
             clearCsvBtn.addEventListener('click', () => { csvWordsTextarea.value = ''; });
-            
+            endGameBtn.addEventListener('click', function() {
+                if (gameActive && confirm('Are you sure you want to end the game?')) {
+                    endGame("Game ended by player.");
+                }
+            });
+            toggleWordBankBtn.addEventListener('click', function() {
+                wordBankElement.classList.toggle('visible');
+                this.textContent = wordBankElement.classList.contains('visible') ? 
+                    'Hide Word Bank' : 'Show Word Bank';
+            });
+                        
             // Clear all words button
             clearAllBtn.addEventListener('click', clearAllWords);
             
@@ -1369,6 +1425,12 @@
                     // Spacebar for pause (only if not showing answer)
                     e.preventDefault();
                     togglePause();
+                }
+                else if (e.key === 'x' || e.key === 'X') {
+                    e.preventDefault();
+                    if (gameActive && confirm('Are you sure you want to end the game?')) {
+                endGame("Game ended by player.");
+                    }
                 }
             });
             
