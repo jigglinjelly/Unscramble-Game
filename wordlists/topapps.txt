@@ -1,4 +1,4 @@
-Google Gemini
+Gemini
 ChatGPT
 Capcut
 SGSecure
@@ -8,9 +8,9 @@ Chagee
 Telegram
 SHEIN
 Google
-Google Maps
+Maps
 Amazon
-Luckin Coffee
+Luckin
 Gmail
 Shopee
 FairPrice
@@ -21,7 +21,7 @@ Trip.com
 Facebook
 Alipay
 Taobao
-Google Drive
+Drive
 YouTrip
 Teams
 Grab
